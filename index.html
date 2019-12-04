@@ -1,0 +1,72 @@
+<<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>DXF Test</title>
+  </head>
+  <body>
+
+
+  <script src="three.min.js"></script>
+  <script type="text/javascript" src="JFM.js"></script>
+    <script>
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
+
+    var camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 100 );
+    camera.position.set( 0, 0, 0 );
+    camera.lookAt( 4.7256354238691, 29.436454066721804, 0.00204 );
+
+    var scene = new THREE.Scene();
+
+    var material = new THREE.MeshStandardMaterial( { color : 0x00cc00 } );
+
+    var geometry = new THREE.Geometry();
+    //geometry.vertices.push(new THREE.Vector3(4.72227256402, 29.4328751179, 0.00200138787));
+    //geometry.vertices.push(new THREE.Vector3(3, 3, 0));
+    //geometry.vertices.push(new THREE.Vector3(5, 6, 0));
+
+    //var line = new THREE.Line( geometry, material );
+    //scene.add( line );
+    //renderer.render( scene, camera );
+
+    var points = bigData['LandXML']['Surfaces']['Surface']['Definition']['Pnts']['P']
+    var faces = bigData['LandXML']['Surfaces']['Surface']['Definition']['Faces']['F']
+
+    console.log('Complete XML file')
+    console.log(bigData)
+    console.log('POINTS')
+    console.log(points)
+    console.log('FACES')
+    console.log(faces)
+
+
+  for(i=0;i<points.length;i++){
+        var [point1,point2,point3] = points[i]['__text'].split(' ').map(Number)
+        point1 *= .00001
+        point2 *= .00001
+        point3 *= .00001
+        geometry.vertices.push(new THREE.Vector3(point1,point2,point3))
+    }
+
+  for(i=0;i<faces.length;i++){
+    console.log(faces[i]);
+    var [face1,face2,face3] = faces[i].split(' ').map(Number)
+    var face = new THREE.Face3(face1 - 1,face2 - 1, face3 - 1)
+    geometry.faces.push(face)
+  }
+
+  geometry.computeBoundingBox();
+  console.log(geometry.boundingBox)
+
+  geometry.elementsNeedUpdate = true;
+  scene.add( new THREE.Mesh( geometry, material ) );
+  console.log(geometry)
+  var light = new THREE.PointLight( 0xff0000, 1, 100 );
+  light.position.set( 50, 30, 0 );
+  scene.add( light );
+
+  </script>
+  </body>
+</html>
